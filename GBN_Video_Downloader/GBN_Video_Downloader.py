@@ -7,7 +7,7 @@ try:
 #    raise MyException("There was an error: %r" % e)
 
 page = data.text
-links = re.findall("(https:\/\/www.facebook.com\/photo.php\?v\=(\d+))",page.read())
+links = re.findall("(https:\/\/www.facebook.com\/photo.php\?v\=(\d+))",data.text)
 if links.count > 1:
     distinctLinks = list(set(links))
     for x in range(0,len(distinctLinks)):
