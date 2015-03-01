@@ -1,8 +1,11 @@
 import re
-import requests
+#import requests
 import os
+import io
+import sys
+import urllib.request
 
-LOCALSTORE = "/Users/kimaniidaniel/Desktop/GBNNews/"
+LOCALSTORE = "/temp/videos/GBNNews/"
 MAXPAGE = 5
 STARTPAGE = 3
 ARTICLES_PER_PAGE = 5
@@ -14,33 +17,45 @@ class Downloader:
     This downloads a page on the gbn.gd site
     """
     def getNewsFromPage(self, url):
-        data = requests.get(url)
-        links = re.findall("<a href=\"(/en/gbnnews/\d+/\d+\/.+\.htm)\">", data.text)
+        #data = requests.get(url)
+        data = self.getWebPage(url)
+        links = re.findall("<a href=\"(/en/gbnnews/\d+/\d+\/.+\.htm)\">", data)
         if len(links) > 1:
             distinctLinks = list(set(links))
             for x in range(0, len(distinctLinks)):
                 print ("Processing: %s" % distinctLinks[x])
-                data = requests.get("http://gbn.gd" + distinctLinks[x])
-                links = re.findall("<a href=\"(/attachment/\d+/.+\.mp4)", data.text)
+                data = self.getWebPage("http://gbn.gd" + distinctLinks[x])
+                links = re.findall("<a href=\"(/attachment/\d+/.+\.mp4)", data)
                 distinctLinks2 = list(set(links))
                 for x in range(0, len(distinctLinks2)):
-                    print (distinctLinks2[x])
-                    print ("\t- Downloading Video: %s" % distinctLinks2[x])
-                    filename = re.findall("/attachment/\d+/(.+.mp4)", distinctLinks2[x])
-                    if self.fileExists(LOCALSTORE + filename[0]) == False:
-                        file = open(LOCALSTORE + filename[0], 'wb')
-                        response = requests.get("http://gbn.gd" + distinctLinks2[x], stream=True)
-                        for block in response.iter_content(1024):
-                            if not block:
-                                break
-                            file.write(block)
-                        file.close()
+                    vid = str.replace(distinctLinks2[x],'”','').replace('“','')
+                    print ("\t- Downloading Video: %s" % vid)
+                    filename = re.findall("/attachment/\d+/(.+.mp4)", vid)
+                    if not self.fileExists(LOCALSTORE + filename[0]):
+                        if not os.path.exists(LOCALSTORE):
+                            try:
+                                d = os.makedirs(LOCALSTORE)
+                                print (d)
+                                file = open(LOCALSTORE + filename[0], 'wb')
+                                response = getWebPage("http://gbn.gd" + vid, stream=True)
+                                for block in response.iter_content(1024):
+                                    if not block:
+                                        break
+                                    file.write(block)
+                                file.close()
+                            except Exception as e:
+                                print("Unexpected error: ",e.args[0])
                     else:
                           print("\t- File already exists") 
             print("Total: %d articles discovered\n" % len(distinctLinks))
     
     def fileExists(self,file):
         return os.path.isfile(file)
+    
+    def getWebPage(self,url):
+        page = urllib.request.urlopen(url)
+        f = io.TextIOWrapper(page,encoding='utf-8')
+        return f.read()
 
 d = Downloader()
 for x in range(STARTPAGE,MAXPAGE*ARTICLES_PER_PAGE,ARTICLES_PER_PAGE):
