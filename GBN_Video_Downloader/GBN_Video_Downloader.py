@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#----------------------SETTINGS----------------------------
+# Edit these settings as required
+LOCALSTORE = "GBNNews/"                                     # directory to store downloaded videos
+MAXPAGE = 15                                                # max number of pages to scan for videos
+STARTPAGE = 0                                               # page to start scanning from
+ARTICLES_PER_PAGE = 5                                       # expected articles on each page
+BASEURL = "http://gbn.gd/en/gbnnews/1/?ls-art0="            # base URL to look for pages
+PAGE_REGEX = "<a href=\"(/en/gbnnews/\d+/\d+\/.+\.htm)\">"  # regex used to find the respective pages for the articles eg <a href="/en/gbnnews/1/927/$2m-for-Home-Grown-Programme.htm">$2m for Home-Grown Programme</a>
+VIDEO_REGEX = "<a href=\"(/attachment/\d+/.+\.mp4)"         # regex used to find the videos on the article pages
+GBNSITE = "http://gbn.gd"                                   # GBN main site URL
+#-------- END: Edit nothing under this line ---------------
+
 import re
 import datetime
 import time
@@ -15,20 +27,6 @@ try:
     import urllib.request as urlRequest
 except:
     import urllib as urlRequest
-
-#----------------------SETTINGS----------------------------
-# Edit these settings as required
-LOCALSTORE = "GBNNews/"                                     # directory to store downloaded videos
-MAXPAGE = 15                                                # max number of pages to scan for videos
-STARTPAGE = 0                                               # page to start scanning from
-ARTICLES_PER_PAGE = 5                                       # expected articles on each page
-BASEURL = "http://gbn.gd/en/gbnnews/1/?ls-art0="            # base URL to look for pages
-PAGE_REGEX = "<a href=\"(/en/gbnnews/\d+/\d+\/.+\.htm)\">"  # regex used to find the respective pages for the articles eg <a href="/en/gbnnews/1/927/$2m-for-Home-Grown-Programme.htm">$2m for Home-Grown Programme</a>
-VIDEO_REGEX = "<a href=\"(/attachment/\d+/.+\.mp4)"         # regex used to find the videos on the article pages
-GBNSITE = "http://gbn.gd"                                   # GBN main site URL
-#-------- END: Edit nothing under this line ---------------
-
-
 
 
 class Downloader:
