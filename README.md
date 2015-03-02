@@ -2,7 +2,7 @@
 
 This project came from the need to get news onto my XBMC media player. 
 There were no current plugins that allowed me to watch local news and I had no interest in creating a plugin. So the next best thing was to create this script that allowed
-me to download the videos of their public site. Once the settings are configured on the script and it's scheduled using cron or windows scheduler it does it's job well.
+me to download the videos from their public site and my media player will find and index the videos. Once the settings are configured on the script and it's scheduled using cron or windows scheduler it does it's job well.
 
 The script contains all the settings on the top lines. Here they are with some notes
 ```sh
@@ -17,4 +17,4 @@ VIDEO_REGEX = "<a href=\"(/attachment/\d+/.+\.mp4)"         # regex used to find
 GBNSITE = "http://gbn.gd"                                   # GBN main site URL
 -------- END: Edit nothing under this line ---------------
 ```
-Once those are set properly the script can be execured via the shell
+Once those are set properly the script can be execured via python cli
